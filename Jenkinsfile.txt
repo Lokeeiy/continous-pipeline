@@ -1,98 +1,103 @@
-pipeline {
-  agent any
-  environment {
-    DIRECTORY_PATH = "C:/Users/lokesh r/Documents/JenkinsFile"
-    TESTING_ENVIRONMENT = "QA"
-    PRODUCTION_ENVIRONMENT = "Lokesh"
-    EMAIL_RECIPIENT = "lokeshravichandran59@gmail.com"
-  }
-  stages {
-    stage('Build') {
-      steps {
-        echo "Stage 1: Building the code using Maven and GitLab CI/CD"
-      }
-    }
-    stage('Unit and Integration Tests') {
-      steps {
-        echo "Stage 2: Running unit tests and integration tests using Jest"
-      }
-      post {
-        success {
-          archiveArtifacts artifacts: 'test-*.log', allowEmptyArchive: true
-          emailext(
-            to: "${EMAIL_RECIPIENT}",
-            subject: "Unit and Integration Tests Passed",
-            body: "The Unit and Integration Tests stage was successful.",
-            attachmentsPattern: 'test-*.log',
-            attachLog: true
-          )
-        }
-        failure {
-          archiveArtifacts artifacts: 'test-*.log', allowEmptyArchive: true
-          emailext(
-            to: "${EMAIL_RECIPIENT}",
-            subject: "Unit and Integration Tests Failed",
-            body: "The Unit and Integration Tests stage failed. Please check the attached logs for details.",
-            attachmentsPattern: 'test-*.log',
-            attachLog: true
-          )
-        }
-      }
-    }
-    stage('Code Analysis') {
-      steps {
-        echo "Stage 3: Integrate a code analysis tool to analyze the code using Jenkins"
-      }
-    }
-    stage('Security Scan') {
-      steps {
-        echo "Stage 4: Performing a security scan using Burp Suite"
-      }
-      post {
-        success {
-         archiveArtifacts artifacts: 'security-*.log', allowEmptyArchive: true
-          emailext(
-            to: "${EMAIL_RECIPIENT}",
-            subject: "Security Scan Passed",
-            body: "The Security Scan stage was successful.",
-            attachmentsPattern: 'security-*.log',
-            attachLog: true
-          )
-        }
-        failure {
-          archiveArtifacts artifacts: 'security-*.log', allowEmptyArchive: true
-          emailext(
-            to: "${EMAIL_RECIPIENT}",
-            subject: "Security Scan Failed",
-            body: "The Security Scan stage failed. Please check the attached logs for details.",
-            attachmentsPattern: 'security-*.log',
-            attachLog: true
-          )
-        }
-      }
-    }
-    stage('Deploy to Staging') {
-      steps {
-        echo "Stage 5: Deploying the application to the staging server using AWS"
-      }
-    }
-    stage('Integration Tests on Staging') {
-      steps {
-        echo "Stage 6: Running integration tests on the staging environment"
-      }
-    }
-    stage('Deploy to Production') {
-      steps {
-        echo "Stage 7: Deploying the application to the production server using AWS"
-      }
-    }
-  }
-  post {
-    success {
-      echo "Pipeline completed successfully!"
-    }
-    failure {
-      echo "Pipeline failed."
-    }
-  }
+pipeline { 
+    agent any 
+    environment { 
+        CODE_DIRECTORY = "C:/Users/lokesh r/Documents/Jenkinsfile.txt" 
+        TEST_ENV = "testing" 
+        PROD_ENV = "Lokesh" 
+        NOTIFICATION_EMAIL = "lokeshravichandran59@gmail.com"  
+    } 
+    stages { 
+        stage('Build') { 
+            steps { 
+                echo "Fetching the source code from: $CODE_DIRECTORY" 
+                echo "Compiling the code and generating artifacts" 
+                // Add actual build steps here 
+            } 
+        } 
+        stage('Unit and Integration Tests') { 
+            steps { 
+                echo "Running unit tests" 
+                echo "Running integration tests" 
+                // Add actual test steps here 
+            } 
+            post { 
+                success { 
+                    mail to: "${env.NOTIFICATION_EMAIL}", 
+                         subject: "Unit and Integration Tests Passed", 
+                         body: "Unit and Integration Tests have passed successfully. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
+                         mimeType: 'text/html' 
+                } 
+                failure { 
+                    mail to: "${env.NOTIFICATION_EMAIL}", 
+                         subject: "Unit and Integration Tests Failed", 
+                         body: "Unit and Integration Tests have failed. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
+                         mimeType: 'text/html' 
+                } 
+            } 
+        } 
+        stage('Code Analysis') { 
+            steps { 
+                echo 'Checking the quality of the code' 
+                // Add actual code quality check steps here 
+            } 
+        } 
+        stage('Security Scan') { 
+            steps { 
+                echo 'Performing security scan' 
+                // Add actual security scan steps here 
+            } 
+            post { 
+                success { 
+                    mail to: "${env.NOTIFICATION_EMAIL}", 
+                         subject: "Security Scan Passed", 
+                         body: "Security scan completed without any vulnerabilities. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
+                         mimeType: 'text/html' 
+                } 
+                failure { 
+                    mail to: "${env.NOTIFICATION_EMAIL}", 
+                         subject: "Security Scan Failed", 
+                         body: "Security scan detected vulnerabilities. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
+                         mimeType: 'text/html' 
+                } 
+            } 
+        } 
+        stage('Deploy to Staging') { 
+            steps { 
+                echo "Deploying the application to the $TEST_ENV environment" 
+                // Add actual staging deployment steps here 
+            } 
+        } 
+        stage('Integration Tests on Staging') { 
+            steps { 
+                echo "Running integration tests on staging environment" 
+                // Add actual integration tests on staging steps here 
+            } 
+        } 
+        stage('Deploy to Production') { 
+            steps { 
+                echo "Deploying the code to the $PROD_ENV environment" 
+                // Add actual production deployment steps here 
+            } 
+        } 
+    } 
+ 
+    post { 
+        always { 
+            emailext ( 
+                subject: "Pipeline Status: ${currentBuild.result}", 
+                body: '''<html> 
+                <body> 
+                <p>Build Status: ${currentBuild.result}</p> 
+                <p>Build Number: ${currentBuild.number}</p> 
+                <p>Console Output: <a 
+                href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p> 
+                </body> 
+                </html>''', 
+                to: 'lokeshravichandran59@gmail.com', 
+                from: 'jenkins@example.com', 
+                replyTo: 'jenkins@example.com', 
+                mimeType: 'text/html' 
+            ) 
+        } 
+    } 
 }
