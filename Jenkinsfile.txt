@@ -4,7 +4,7 @@ environment {
 CODE_DIRECTORY = "C:\Users\lokesh r\Documents\Jenkinsfile.txt" 
 TEST_ENV = "testing" 
 PROD_ENV = "Lokesh" 
-NOTIFICATION_EMAIL = "lokeshravichandran59@gmail.com" 
+NOTIFICATION_EMAIL = "lokeshravichandran59@gmail.com"  
 } 
 stages { 
 stage('Build') { 
