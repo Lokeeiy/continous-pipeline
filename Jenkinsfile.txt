@@ -4,7 +4,7 @@ pipeline {
     DIRECTORY_PATH = "C:/Users/lokesh r/Documents/Jenkinsfile.txt"
     TESTING_ENVIRONMENT = "QA"
     PRODUCTION_ENVIRONMENT = "Lokesh"
-    EMAIL_RECIPIENT = "lokeshravichandran59@gmail.com"
+    EMAIL_RECIPIENT = "ravichandranlokesh59@gmail.com"
   }
   stages {
     stage('Build') {
