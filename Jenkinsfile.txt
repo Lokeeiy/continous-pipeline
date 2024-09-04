@@ -15,27 +15,25 @@ pipeline {
     stage('Unit and Integration Tests') {
       steps {
         echo "Stage 2: Running unit tests and integration tests using Jest"
-        // Simulate creation of test log file for attachment
-        writeFile file: 'test-results.log', text: 'Test results log content'
       }
       post {
         success {
-          archiveArtifacts artifacts: 'test-results.log', allowEmptyArchive: true
+          archiveArtifacts artifacts: 'test-*.log', allowEmptyArchive: true
           emailext(
             to: "${EMAIL_RECIPIENT}",
             subject: "Unit and Integration Tests Passed",
             body: "The Unit and Integration Tests stage was successful.",
-            attachments: 'test-results.log', // Attach the log file
+            attachmentsPattern: 'test-*.log',
             attachLog: true
           )
         }
         failure {
-          archiveArtifacts artifacts: 'test-results.log', allowEmptyArchive: true
+          archiveArtifacts artifacts: 'test-*.log', allowEmptyArchive: true
           emailext(
             to: "${EMAIL_RECIPIENT}",
             subject: "Unit and Integration Tests Failed",
             body: "The Unit and Integration Tests stage failed. Please check the attached logs for details.",
-            attachments: 'test-results.log', // Attach the log file
+            attachmentsPattern: 'test-*.log',
             attachLog: true
           )
         }
@@ -49,27 +47,25 @@ pipeline {
     stage('Security Scan') {
       steps {
         echo "Stage 4: Performing a security scan using Burp Suite"
-        // Simulate creation of security log file for attachment
-        writeFile file: 'security-scan.log', text: 'Security scan log content'
       }
       post {
         success {
-         archiveArtifacts artifacts: 'security-scan.log', allowEmptyArchive: true
+         archiveArtifacts artifacts: 'security-*.log', allowEmptyArchive: true
           emailext(
             to: "${EMAIL_RECIPIENT}",
             subject: "Security Scan Passed",
             body: "The Security Scan stage was successful.",
-            attachments: 'security-scan.log', // Attach the log file
+            attachmentsPattern: 'security-*.log',
             attachLog: true
           )
         }
         failure {
-          archiveArtifacts artifacts: 'security-scan.log', allowEmptyArchive: true
+          archiveArtifacts artifacts: 'security-*.log', allowEmptyArchive: true
           emailext(
             to: "${EMAIL_RECIPIENT}",
             subject: "Security Scan Failed",
             body: "The Security Scan stage failed. Please check the attached logs for details.",
-            attachments: 'security-scan.log', // Attach the log file
+            attachmentsPattern: 'security-*.log',
             attachLog: true
           )
         }
