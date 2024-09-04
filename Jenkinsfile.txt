@@ -5,78 +5,104 @@ pipeline {
         TEST_ENV = "testing" 
         PROD_ENV = "Lokesh" 
         NOTIFICATION_EMAIL = "lokeshravichandran59@gmail.com"  
+        LOG_FILE = "build_logs.txt"  // Define the log file
     } 
     stages { 
         stage('Build') { 
             steps { 
-                echo "Fetching the source code from: $CODE_DIRECTORY" 
-                echo "Compiling the code and generating artifacts"  
-                // Add actual build steps here 
+                script {
+                    // Redirect the console output to the log file
+                    sh "echo 'Fetching the source code from: $CODE_DIRECTORY' > $LOG_FILE"
+                    sh "echo 'Compiling the code and generating artifacts' >> $LOG_FILE"
+                    // Add actual build steps here
+                }
             } 
         } 
         stage('Unit and Integration Tests') { 
             steps { 
-                echo "Running unit tests" 
-                echo "Running integration tests" 
-                // Add actual test steps here 
+                script {
+                    // Append test logs to the log file
+                    sh "echo 'Running unit tests' >> $LOG_FILE"
+                    sh "echo 'Running integration tests' >> $LOG_FILE"
+                    // Add actual test steps here 
+                }
             } 
             post { 
                 success { 
                     mail to: "${env.NOTIFICATION_EMAIL}", 
                          subject: "Unit and Integration Tests Passed", 
                          body: "Unit and Integration Tests have passed successfully. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
-                         mimeType: 'text/html' 
+                         mimeType: 'text/html', 
+                         attachmentsPattern: "${env.LOG_FILE}"  // Attach the log file
                 } 
                 failure { 
                     mail to: "${env.NOTIFICATION_EMAIL}", 
                          subject: "Unit and Integration Tests Failed", 
                          body: "Unit and Integration Tests have failed. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
-                         mimeType: 'text/html' 
+                         mimeType: 'text/html', 
+                         attachmentsPattern: "${env.LOG_FILE}"  // Attach the log file
                 } 
             } 
         } 
         stage('Code Analysis') { 
             steps { 
-                echo 'Checking the quality of the code' 
-                // Add actual code quality check steps here 
+                script {
+                    // Append code analysis logs to the log file
+                    sh "echo 'Checking the quality of the code' >> $LOG_FILE"
+                    // Add actual code quality check steps here 
+                }
             } 
         } 
         stage('Security Scan') { 
             steps { 
-                echo 'Performing security scan' 
-                // Add actual security scan steps here 
+                script {
+                    // Append security scan logs to the log file
+                    sh "echo 'Performing security scan' >> $LOG_FILE"
+                    // Add actual security scan steps here 
+                }
             } 
             post { 
                 success { 
                     mail to: "${env.NOTIFICATION_EMAIL}", 
                          subject: "Security Scan Passed", 
                          body: "Security scan completed without any vulnerabilities. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
-                         mimeType: 'text/html' 
+                         mimeType: 'text/html', 
+                         attachmentsPattern: "${env.LOG_FILE}"  // Attach the log file
                 } 
                 failure { 
                     mail to: "${env.NOTIFICATION_EMAIL}", 
                          subject: "Security Scan Failed", 
                          body: "Security scan detected vulnerabilities. See attached logs for details.\nConsole Output: ${env.BUILD_URL}console", 
-                         mimeType: 'text/html' 
+                         mimeType: 'text/html', 
+                         attachmentsPattern: "${env.LOG_FILE}"  // Attach the log file
                 } 
             } 
         } 
         stage('Deploy to Staging') { 
             steps { 
-                echo "Deploying the application to the $TEST_ENV environment" 
-                // Add actual staging deployment steps here 
+                script {
+                    // Append deployment logs to the log file
+                    sh "echo 'Deploying the application to the $TEST_ENV environment' >> $LOG_FILE"
+                    // Add actual staging deployment steps here 
+                }
             } 
         } 
         stage('Integration Tests on Staging') { 
             steps { 
-                echo "Running integration tests on staging environment" 
-                // Add actual integration tests on staging steps here 
+                script {
+                    // Append integration test logs to the log file
+                    sh "echo 'Running integration tests on staging environment' >> $LOG_FILE"
+                    // Add actual integration tests on staging steps here 
+                }
             } 
         } 
         stage('Deploy to Production') { 
             steps { 
-                echo "Deploying the code to the $PROD_ENV environment" 
-                // Add actual production deployment steps here 
+                script {
+                    // Append production deployment logs to the log file
+                    sh "echo 'Deploying the code to the $PROD_ENV environment' >> $LOG_FILE"
+                    // Add actual production deployment steps here 
+                }
             } 
         } 
     } 
@@ -96,7 +122,8 @@ pipeline {
                 to: 'lokeshravichandran59@gmail.com', 
                 from: 'jenkins@example.com', 
                 replyTo: 'jenkins@example.com', 
-                mimeType: 'text/html' 
+                mimeType: 'text/html',
+                attachmentsPattern: "${env.LOG_FILE}"  // Attach the log file
             ) 
         } 
     } 
